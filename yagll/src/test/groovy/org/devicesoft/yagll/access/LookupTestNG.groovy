@@ -24,7 +24,7 @@ public class LookupTestNG {
 
   @BeforeClass
   void configureAndPopulateIntegration() {
-    configObject = new ConfigSlurper().parse(new URL("http://localhost/yagll.groovy"))
+    configObject = new ConfigSlurper().parse(new URL("${System.getProperty('configuration.url')}/yagll.groovy"))
     Yagll.config = configObject.simple
     config = configObject.selftest.toProperties()
 

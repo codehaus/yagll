@@ -12,6 +12,7 @@ import javax.naming.directory.ModificationItem
 import javax.naming.directory.DirContext
 import javax.naming.directory.BasicAttribute
 import javax.naming.ldap.LdapName
+import javax.naming.directory.BasicAttributes
 
 public class Bind {
 
@@ -53,7 +54,7 @@ public class Bind {
             }
           }
           else {
-            def expando = getModifiedValues(entity, object)
+            def expando = getValues(entity, object)
             def mods = getModificationItems(values, expando)
             if (mods) {
               LdapUtils.updateEntity(name, mods)
@@ -238,47 +239,17 @@ public class Bind {
     def addKeys = target.properties.keySet().findAll { target[it] } - replaceKeys
 
     replaceKeys.each {String key ->
-      if (current[key].size() == 1 && target[key].size() == 1) {
-        if (target[key] instanceof ArrayList) {
-          def attr = new BasicAttribute(key, target[key].first())
-          def mod = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attr)
-          modificationItems << mod
-        } else {
-          removeKeys << key
-          addKeys << key
-        }
-      } else {
-        def modsForThisKey = []
-        target[key].each {
-          def attr = new BasicAttribute(key, it)
-          def mod = new ModificationItem(DirContext.ADD_ATTRIBUTE, attr)
-          modsForThisKey << mod
-        }
-        current[key].each {
-          def attr = new BasicAttribute(key, it)
-          def mod = new ModificationItem(DirContext.REMOVE_ATTRIBUTE, attr)
-          modsForThisKey << mod
-        }
-        def strings = modsForThisKey.collect { it.toString() }
-        def attributes = strings.collect { it.substring(it.indexOf(" ") + 1) }
-
-        def cardinality = [:]
-        attributes.each {
-          if (cardinality.containsKey(it)) {
-            cardinality[it]++
+      if ((current[key].intersect(target[key]).size() * 2 ) != (current[key].size() + target[key].size())) {
+        def attr = new BasicAttribute(key)
+        target.getProperty(key).each {
+          if (it instanceof byte[]) {
+            attr.add(it)
           } else {
-            cardinality[it] = 1
+            attr.add(it as String)
           }
         }
-        cardinality.keySet().each {k ->
-          if (strings.find { it == "Add $k" } && strings.find { it == "Remove $k" }) {
-            // remove and add do nothing
-          } else if (strings.find { it == "Add $k" }) {
-            modificationItems << modsForThisKey.find { it.toString() == "Add $k" }
-          } else {
-            modificationItems << modsForThisKey.find { it.toString() == "Remove $k" }
-          }
-        }
+        def mod = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attr)
+        modificationItems << mod
       }
     }
 

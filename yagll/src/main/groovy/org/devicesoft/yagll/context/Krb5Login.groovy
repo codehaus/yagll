@@ -17,11 +17,10 @@ public class Krb5Login implements CallbackHandler {
   LoginContext login(principal, keytab) {
     def configuration = new LdapConfiguration(principal, keytab)
     def loginContext = new LoginContext("unused", null, this, configuration)
-
     loginContext.login()
     loginContext
   }
 
   void handle(Callback[] callbacks) {}
-  
+
 }

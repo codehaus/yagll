@@ -2,6 +2,9 @@ package org.devicesoft.yagll.context
 
 import javax.naming.directory.InitialDirContext
 import org.devicesoft.yagll.Yagll
+import javax.naming.AuthenticationException
+import javax.naming.directory.SearchControls
+import javax.security.auth.login.LoginContext
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,10 +16,37 @@ import org.devicesoft.yagll.Yagll
 
 public class KerberosAuthenticator {
 
+  static InitialDirContext context = null
+  static LoginContext loginContext = null
+
   InitialDirContext getInitialDirContext() {
-    def loginContext = new Krb5Login().login(Yagll.principal, Yagll.keytab)
-    def saslAuthenticator = new SaslAuthentication(Yagll.url, Yagll.krb5, loginContext.subject)
-    saslAuthenticator.getInitialDirContext()
+
+    def saslAuthenticator
+
+    if (!context) {
+      loginContext?.logout()
+      loginContext = new Krb5Login().login(Yagll.principal, Yagll.keytab)
+      saslAuthenticator = new SaslAuthentication(Yagll.url, Yagll.krb5, loginContext.subject)
+      context = saslAuthenticator.getInitialDirContext()
+      return context
+    }
+    try {
+      context.search("cn=this is used to test the connection", "objectClass=*", new SearchControls(searchScope: SearchControls.OBJECT_SCOPE))
+      return context
+    } catch (javax.naming.NameNotFoundException nnfe) {
+      return context
+    } catch (e) {
+      e.printStackTrace()
+    }
+    System.err.println "KerberosAuthenticator: getting new context..."
+
+    loginContext?.logout()
+    loginContext = new Krb5Login().login(Yagll.principal, Yagll.keytab)
+    saslAuthenticator = new SaslAuthentication(Yagll.url, Yagll.krb5, loginContext.subject)
+    context?.close()
+    context = saslAuthenticator.getInitialDirContext()
+    context
+
   }
 
 }

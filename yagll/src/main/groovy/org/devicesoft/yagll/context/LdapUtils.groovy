@@ -46,7 +46,8 @@ public class LdapUtils {
         def allValues = attribute.getAll()
         result[attribute.ID] = []
         while (allValues?.hasMore()) {
-          result[attribute.ID] << allValues.next()
+          def value = allValues.next()
+          result[attribute.ID] << value
         }
       }
       result["=="] = [searchResult.nameInNamespace]
