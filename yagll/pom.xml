@@ -10,7 +10,7 @@
     <groupId>org.codehaus</groupId>
     <artifactId>yagll</artifactId>
     <name>Yet Another Groovy LDAP Library</name>
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -41,10 +41,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <!--includes>
+                    <includes>
                         <include>**/SearchTestNG*</include>
                         <include>**/LookupTestNG*</include>
-                    </includes-->
+                    </includes>
                 </configuration>
             </plugin>
             
