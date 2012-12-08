@@ -25,9 +25,9 @@ public class SearchTestNG {
 
   @BeforeClass
   void configureAndPopulate() {
-    configObject = new ConfigSlurper().parse(new URL("${System.getProperty("configuration.url")}/yagll.groovy"))
-    Yagll.config = configObject.simple
-    config = configObject.selftest.search.toProperties()
+      configObject = new ConfigSlurper().parse(new URL("file:///root/builder/grails-app/conf/Config.groovy"))["simple"]
+      Yagll.config = configObject
+      config = configObject.selftest.toProperties()
 
     String searchRoot = config.getProperty("searchRoot")
     String searchRootCN = config.getProperty("searchRootCN")
@@ -99,7 +99,7 @@ public class SearchTestNG {
       def entity = "Test Account"
       String searchRoot = config.getProperty("searchRoot")
       def results = Search.search(new BoundToTestAccountType(), entity, searchRoot)
-      assert results.size() == 11
+      assert results.size() == 13
       results.each { println it.properties }
 
       String commonName = config.getProperty("cn")
@@ -126,7 +126,7 @@ public class SearchTestNG {
     String searchRoot = config.getProperty("searchRoot")
     def filter = "objectclass=*"
     def results = Search.search(new BoundToTestAccountType(), entity, searchRoot, filter, SearchControls.ONELEVEL_SCOPE)
-    assert results.size() == 10
+    assert results.size() == 12
 
     String commonName = config.getProperty("cn")
     String lastName = config.getProperty("sn")
@@ -150,7 +150,7 @@ public class SearchTestNG {
     def filter = "objectclass=inetOrgPerson"
     def results = Search.search(new BoundToTestAccountType(), entity, searchRoot, filter)
 
-    assert results.size() == 10
+    assert results.size() == 13
 
     String commonName = config.getProperty("cn")
     String lastName = config.getProperty("sn")
@@ -165,8 +165,8 @@ public class SearchTestNG {
       found = results.find { it.userName == userName + idx }
       assert found
 
-      def name = "uid=$userName$idx,cn=test people,$LdapUtils.initialDirContext.nameInNamespace"
-      def nameInContext = "uid=$userName$idx,cn=test people"
+      def name = "uid=$userName$idx,$searchRoot,$LdapUtils.initialDirContext.nameInNamespace"
+      def nameInContext = "uid=$userName$idx,$searchRoot"
 
       found = results.find { new LdapName(name).compareTo(new LdapName(it.distinguishedName)) == 0 }
       assert found

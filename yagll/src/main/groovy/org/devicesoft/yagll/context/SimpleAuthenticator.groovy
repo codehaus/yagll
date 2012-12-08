@@ -54,8 +54,10 @@ public class SimpleAuthenticator {
       environment.put(Context.SECURITY_CREDENTIALS, password)
     }
 
-    new InitialDirContext(environment)
+    def ctx = new InitialDirContext(environment)
+    ctx.addToEnvironment("java.naming.ldap.attributes.binary", "userPKCS12");
 
+    ctx
   }
 
 }

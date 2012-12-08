@@ -47,7 +47,14 @@ public class LdapUtils {
         result[attribute.ID] = []
         while (allValues?.hasMore()) {
           def value = allValues.next()
-          result[attribute.ID] << value
+          try {
+              if (value.class == String)
+                  result[attribute.ID] << new String(value)
+              else if (value.class == byte[])
+                result[attribute.ID] << value
+          } catch (ClassCastException e1) {
+              result[attribute.ID] << new String(value)
+          }
         }
       }
       result["=="] = [searchResult.nameInNamespace]
@@ -78,7 +85,9 @@ public class LdapUtils {
     def attrs = new BasicAttributes()
     values.properties.each { attrID, val ->
       def multivalue = new BasicAttribute(attrID)
-      val.each { multivalue.add(it) }
+      val.each {
+        multivalue.add(it)
+      }
       attrs.put(multivalue)
     }
     attrs.put(ocAttrs)

@@ -28,6 +28,7 @@ public class KerberosAuthenticator {
       loginContext = new Krb5Login().login(Yagll.principal, Yagll.keytab)
       saslAuthenticator = new SaslAuthentication(Yagll.url, Yagll.krb5, loginContext.subject)
       context = saslAuthenticator.getInitialDirContext()
+        context.addToEnvironment("java.naming.ldap.attributes.binary", "userPKCS12");
       return context
     }
     try {
@@ -45,6 +46,7 @@ public class KerberosAuthenticator {
     saslAuthenticator = new SaslAuthentication(Yagll.url, Yagll.krb5, loginContext.subject)
     context?.close()
     context = saslAuthenticator.getInitialDirContext()
+      context.addToEnvironment("java.naming.ldap.attributes.binary", "userPKCS12");
     context
 
   }

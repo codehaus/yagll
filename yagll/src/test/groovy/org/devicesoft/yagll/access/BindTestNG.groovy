@@ -25,8 +25,8 @@ public class BindTestNG {
 
   @BeforeClass
   void unbind() {
-    configObject = new ConfigSlurper().parse(new URL("${System.getProperty('configuration.url')}/yagll.groovy"))
-    Yagll.config = configObject.simple
+    configObject = new ConfigSlurper().parse(new URL("file:///root/builder/grails-app/conf/Config.groovy"))["simple"]
+    Yagll.config = configObject
     config = configObject.selftest.toProperties()
 
     def ctx = LdapUtils.getInitialDirContext()

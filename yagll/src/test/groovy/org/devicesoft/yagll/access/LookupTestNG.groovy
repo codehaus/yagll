@@ -24,9 +24,9 @@ public class LookupTestNG {
 
   @BeforeClass
   void configureAndPopulateIntegration() {
-    configObject = new ConfigSlurper().parse(new URL("${System.getProperty('configuration.url')}/yagll.groovy"))
-    Yagll.config = configObject.simple
-    config = configObject.selftest.toProperties()
+      configObject = new ConfigSlurper().parse(new URL("file:///root/builder/grails-app/conf/Config.groovy"))["simple"]
+      Yagll.config = configObject
+      config = configObject.selftest.toProperties()
 
     def ctx = LdapUtils.getInitialDirContext()
     def ocAttr = new BasicAttribute("objectclass")
