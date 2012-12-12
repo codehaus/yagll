@@ -19,15 +19,14 @@ import org.testng.annotations.AfterTest
  */
 
 public class BindTestNG {
-/*
   def configObject
   def config
 
   @BeforeClass
   void unbind() {
-    configObject = new ConfigSlurper().parse(new URL("${System.getProperty('configuration.url')}/yagll.groovy"))
+    configObject = new ConfigSlurper().parse(new URL("file:///root/builder/grails-app/conf/Config.groovy"))
     Yagll.config = configObject.simple
-    config = configObject.selftest.toProperties()
+    config = configObject.simple.selftest.toProperties()
 
     def ctx = LdapUtils.getInitialDirContext()
 
@@ -118,5 +117,4 @@ public class BindTestNG {
     Yagll.bind(groupOfNames, ["groupOfNames": "cn=${config.getProperty("group.cn")}"])
     Yagll.unbind("cn=${config.getProperty("group.cn")}")
   }
-*/
 }

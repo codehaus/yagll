@@ -19,7 +19,6 @@ import org.testng.annotations.AfterTest
  */
 
 class BindTest2NG {
-/*
   def configObject
   def config
 
@@ -68,5 +67,4 @@ class BindTest2NG {
     Yagll.bind(vpn, [vpn: name])
 
   }
-*/
 }
